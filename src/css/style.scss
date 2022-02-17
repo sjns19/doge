@@ -1,0 +1,524 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+@import 'modules/vars.scss';
+@import 'modules/mixins.scss';
+
+html {
+  font-family: serif;
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+  -ms-text-size-adjust: 100%;
+}
+
+@include breakpoint(350px) {
+  html {
+    min-width: 350px;
+  }
+}
+
+.body {
+  background-color: $--color-background;
+  color: $--color-primary;
+  font-family: 'Garamond', serif;
+  letter-spacing: 1px;
+}
+
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  max-width: 1080px;
+  height: 100vh;
+
+  @include breakpoint($--breakpoint-container) {
+    max-width: 100%;
+  }
+}
+
+.main-card {
+  position: relative;
+  background-color: $--color-secondary;
+  height: 700px;
+  width: 100%;
+  box-shadow: 0 70px 100px -50px rgba(143, 125, 108, .8);
+  border-radius: 1rem;
+  overflow: hidden;
+  
+  @include breakpoint($--breakpoint-container) {
+    height: 100%;
+    width: 100%;
+    border-radius: 0;
+  }
+}
+
+.navbar {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2.55rem;
+  width: 100%;
+  top: 0;
+  left: 0;
+  z-index: 2;
+}
+
+.navbar-brand {
+  color: $--color-primary;
+  padding: 0.5rem;
+  margin: 1rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.nav-toggler,
+.nav-overlay {
+  display: none;
+}
+
+.nav {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.nav-indicator {
+  position: absolute;
+  display: block;
+  background-color: $--color-primary;
+  height: 3px;
+  width: 20px;
+  bottom: 0.85rem;
+  transform: translateX(45px);
+  transition: transform 2s cubic-bezier(.8, 0, .36, 1);
+
+  &.about {
+    transform: translateX(170px);
+  }
+
+  &.anonymous {
+    transform: translateX(275px);
+  }
+}
+
+.nav-item {
+  padding: 1rem;
+  margin: 0 1rem;
+  list-style-type: none;
+  text-align: center;
+}
+
+.nav-link {
+  color: $--color-primary;
+  font-size: .8rem;
+  font-weight: bold;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+}
+
+@include breakpoint($--breakpoint-tablet) {
+  .navbar {
+    padding: 1rem;
+  }
+
+  .navbar-brand {
+    margin: 0 1rem;
+  }
+}
+
+@include breakpoint($--breakpoint-large) {
+  .nav {
+    position: fixed;
+    flex-direction: column;
+    justify-content: center;
+    background-color: $--color-secondary;
+    top: 0;
+    right: -320px;
+    height: 100%;
+    width: 320px;
+    z-index: 2;
+    transition: transform 0.25s;
+
+    &.active {
+      transform: translateX(-320px);
+    }
+  }
+
+  .nav-overlay {
+    position: fixed;
+    display: block;
+    background-color: rgba($--color-primary, 0.4);
+    height: 100%;
+    width: 100%;
+    left: 0;
+    bottom: 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s;
+
+    &.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+  }
+
+  .nav-toggler {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin: 1rem;
+    width: 25px;
+    z-index: 3;
+    cursor: pointer;
+  
+    & span {
+      display: block;
+      background-color: $--color-primary;
+      height: 1.5px;
+      width: 100%;
+      margin: 0.2rem;
+
+      &:last-child {
+        width: 60%;
+      }
+    }
+  }
+
+  .nav-indicator {
+    display: none;
+  }
+
+  .nav-link {
+    font-size: 1.8rem;
+  }
+}
+
+.page {
+  position: absolute;
+  display: flex;
+  padding: 0 2.55rem;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .5s .8s;
+
+  &.active {
+    pointer-events: all;
+    opacity: 1;
+
+    &#anonymous {
+      li {
+        opacity: 1;
+      }
+    }
+
+    &#home::before {
+      transform: scaleY(1);
+      transition-delay: 1.8s;
+    }
+
+    &#about::before {
+      transform: scaleX(1);
+      transition-delay: 1.8s;
+    }
+
+    .card-body,
+    .card-title {
+      animation: come-in 1s 1s forwards cubic-bezier(.8, 0, .36, 1);
+    }
+
+    .card-header {
+      &::before,
+      &::after {
+        transform: scaleX(1);
+        transition-delay: 2.5s;
+      }
+    }
+
+    .card-body {
+      animation-delay: 1.2s;
+    }
+  }
+
+  &.inactive {
+    .card-body,
+    .card-title {
+      animation: go-out 1s forwards cubic-bezier(.8, 0, .36, 1);
+    }
+
+    .card-header {
+      &::before,
+      &::after {
+        transform: scaleX(0);
+      }
+    }
+
+    &#home::before {
+      transform: scaleY(0);
+    }
+
+    &#about::before {
+      transform: scaleX(0);
+    }
+  }
+
+  &::before {
+    position: absolute;
+    content: '';
+    background-color: $--color-primary;
+    z-index: -1;
+    transform: scale(0);
+    transition: transform .5s cubic-bezier(.8, 0, .36, 1);
+  }
+}
+
+@keyframes come-in {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes go-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(-100px);
+  }
+}
+
+.card {
+  margin: 0.55rem;
+}
+
+.card-body {
+  padding: 1rem;
+  font-size: 1.15rem;
+  opacity: 0;
+}
+
+.card-header {
+  position: relative;
+  padding: 1rem;
+  
+  &::before,
+  &::after {
+    position: absolute;
+    content: '';
+    background-color: $--color-primary;
+    height: 4px;
+    top: -1rem;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform .3s cubic-bezier(.8, 0, .36, 1);;
+  }
+
+  &::before {
+    width: 50px;
+  }
+
+  &::after {
+    width: 150px;
+    opacity: .3;
+  }
+}
+
+.card-title {
+  font-size: 4.55rem;
+  line-height: 1;
+  opacity: 0;
+}
+
+@include breakpoint($--breakpoint-tablet) {
+  .page {
+    padding: 1rem;
+
+    &.inactive {
+      &#home::before {
+        transform: scaleX(0);
+      }
+    }
+  }
+
+  .card {
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .card-header {
+    &::before,
+    &::after {
+      display: none;
+    }
+  }
+}
+
+@include breakpoint($--breakpoint-large) {
+  .card-title {
+    font-size: 3.85rem;
+  }
+}
+
+#home {
+  flex-direction: column;
+  justify-content: flex-end;
+  background: url('../images/Doge.png') no-repeat;
+  background-position: 95% 100%;
+  background-size: 520px 580px;
+
+  &::before {
+    top: 0;
+    left: 2.15rem;
+    height: 100%;
+    width: 280px;
+    opacity: .1;
+    transform: scaleY(0);
+    transform-origin: top;
+  }
+
+  .card {
+    margin-bottom: 3rem;
+    width: 350px;
+  }
+}
+
+#about {
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  background: url('../images/Doge-about.png') no-repeat;
+  background-position: 10% 80%;
+  background-size: 550px 580px;
+
+  &::before {
+    bottom: 0;
+    right: 0;
+    height: 570px;
+    width: 400px;
+    opacity: .1;
+    transform: scaleX(0);
+    transform-origin: right;
+  }
+
+  .card {
+    margin-top: 3rem;
+    width: 430px;
+  }
+}
+
+#anonymous {
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  background: url('../images/anonymous.jpg') no-repeat;
+  background-size: cover;
+  z-index: 3;
+
+  ul {
+    position: relative;
+    color: white;
+    list-style-type: none;
+
+    li {
+      font-size: 2rem;
+      font-weight: bold;
+      opacity: 0;
+      transition: opacity 0.1s ease;
+      
+      &:nth-child(1) {
+        font-size: 6rem;
+        transform: translate(-280%, -100%) rotate(-30deg);
+        transition-delay: 2s;
+      }
+
+      &:nth-child(2) {
+        font-size: 3rem;
+        transform: translate(-100%, -250%);
+        transition-delay: 4s;
+      }
+
+      &:nth-child(3) {
+        font-size: 2rem;
+        transform: translate(-300%, -50%);
+        transition-delay: 3.5s;
+      }
+
+      &:nth-child(4) {
+        font-size: 5rem;
+        transform: translate(-180%, -180%) rotate(-20deg);
+        transition-delay: 3s;
+      }
+    }
+  }
+}
+
+
+@include breakpoint($--breakpoint-tablet) {
+  #home {
+    justify-content: flex-start;
+    background-position: center bottom;
+    background-size: 420px 480px;
+
+    &::before {
+      height: 100px;
+      top: 7rem;
+      left: 0;
+      transform: scaleX(1);
+      transform-origin: left;
+    }
+
+    .card {
+      margin: 3rem auto 0;
+      width: 500px;
+    }
+  }
+
+  #about {
+    justify-content: flex-end;
+    background-position: center 10%;
+    background-size: 320px 360px;
+  
+    &::before {
+      height: 170px;
+    }
+  }
+}
+
+@include breakpoint($--breakpoint-mobile) {
+  #home {
+    background-size: 320px 380px;
+
+    .card {
+      margin-top: 5rem;
+      width: 100% !important;
+    }
+  }
+
+  #about {
+    .card {
+      margin: 0;
+      width: 100%;
+    }
+  }
+}

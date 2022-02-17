@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="src/css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap" rel="stylesheet">
+  <title>Doge</title>
+</head>
+<body class="body">
+  <main class="container">
+    <div class="main-card">
+      <nav class="navbar">
+        <a href="/" class="navbar-brand">Doge</a>
+        <ul class="nav" id="nav">
+          <li class="nav-indicator home" id="nav-indicator"></li>
+          <li class="nav-item">
+            <a href="#home" class="nav-link js-nav-link" id="home-toggle" data-toggle-page="home" title="Home">Home</a>
+          </li>
+          <li class="nav-item">
+            <a href="#about" class="nav-link js-nav-link" id="about-toggle" data-toggle-page="about" title="About">About</a>
+          </li>
+          <li class="nav-item">
+            <a href="#anonymous" class="nav-link js-nav-link" id="anonymous-toggle" data-toggle-page="anonymous" title="Wut's this?">wut?</a>
+          </li>
+        </ul>
+        <div class="nav-overlay" id="nav-overlay"></div>
+        <div class="nav-toggler" id="nav-toggler">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </nav>
+      <div class="page active" id="home">
+        <div class="card">
+          <div class="card-header">
+            <h1 class="card-title">You just visited the Doge!</h1>
+          </div>
+          <div class="card-body">
+            <p>Am famous internet meme, crypto currency or something... hehe</p>
+          </div>
+        </div>
+      </div>
+      <div class="page" id="about">
+        <div class="card">
+          <div class="card-header">
+            <h1 class="card-title">Am pretty<br>famous</h1>
+          </div>
+          <div class="card-body">
+            <p>
+              Idk how but it all happened back in 2013  according to 
+              Wikipedia, hehe... There is also a crypto currency named 
+              after me called Dogecoin. Thanks Billy Markus and 
+              Jackson Palmer! Btw, my breed is Shiba Inu in case
+              you want to know.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="page" id="anonymous">
+        <ul>
+          <li>wow</li>
+          <li>haha</li>
+          <li>thamks for seeing<br>my portfolio</li>
+          <li>kek</li>
+        </ul>
+      </div>
+    </div>
+  </main>
+  <script>
+    (function(d, w) {
+      w.addEventListener('DOMContentLoaded', function() {
+        var App = {
+          activePage: d.getElementById('home'),
+          activePageName: 'home',
+          nav: {
+            body: d.getElementById('nav'),
+            overlay: d.getElementById('nav-overlay'),
+            toggler: d.getElementById('nav-toggler'),
+            links: d.querySelectorAll('.js-nav-link'),
+            indicator: d.getElementById('nav-indicator'),
+
+            toggle: function() {
+              App.nav.body.classList.toggle('active');
+              App.nav.overlay.classList.toggle('active');
+            }
+          }
+        };
+
+        App.nav.toggler.addEventListener('click', App.nav.toggle);
+        App.nav.overlay.addEventListener('click', App.nav.toggle);
+
+        App.nav.links.forEach(function(i) {
+          if (App.activePage.classList.contains('active')) {
+            i.addEventListener('click', function() {
+              var attr = this.getAttribute('data-toggle-page'), 
+                  page = d.getElementById(attr);
+
+              if (!page.classList.contains('active')) {
+                var pageID = App.activePage.id;
+
+                d.getElementById(pageID + '-toggle').classList.remove('active');
+
+                this.classList.add('active');
+
+                if (page.classList.contains('inactive')) {
+                  page.classList.replace('inactive', 'active');
+                } else {
+                  page.classList.add('active');
+                }
+
+                App.activePage.classList.replace('active', 'inactive');
+                App.activePage = page;
+                App.activePageName = App.activePage.id;
+                App.nav.indicator.classList.replace(pageID, App.activePageName);
+              }
+
+              if (App.nav.body.classList.contains('active')) {
+                App.nav.toggle();
+              }
+              return false;
+            });
+          }
+        });
+      });
+    })(document, window);
+  </script>
+</body>
+</html>
