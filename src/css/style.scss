@@ -623,6 +623,7 @@ html {
   #home {
     justify-content: flex-start;
     background-position: center bottom;
+    background-size: 320px 360px;
 
     &::before {
       height: 150px;
@@ -635,7 +636,7 @@ html {
 
   #about {
     background-position: center 10%;
-    background-size: 420px 460px;
+    background-size: 320px 360px;
   
     &::before {
       height: 250px;
