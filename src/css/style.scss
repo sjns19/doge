@@ -9,31 +9,43 @@
 
 html {
   font-family: serif;
-  line-height: 1.5;
+  line-height: 1.4;
   -webkit-text-size-adjust: 100%;
   -webkit-tap-highlight-color: transparent;
   -ms-text-size-adjust: 100%;
-}
 
-@include breakpoint(350px) {
-  html {
+  @include breakpoint(350px) {
     min-width: 350px;
   }
+  
+  @include breakpoint($--breakpoint-mobile) {
+    font-size: 0.8rem;
+  }
 }
+
+/* ----------------------------------------------------
+ * Main body class
+ * ----------------------------------------------------
+ */
 
 .body {
   background-color: $--color-background;
   color: $--color-primary;
   font-family: 'Garamond', serif;
-  letter-spacing: 1px;
+  letter-spacing: 0.3px;
 }
+
+/* ----------------------------------------------------
+ * Container class
+ * ----------------------------------------------------
+ */
 
 .container {
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto;
-  max-width: 1080px;
+  max-width: 1020px;
   height: 100vh;
 
   @include breakpoint($--breakpoint-container) {
@@ -41,15 +53,37 @@ html {
   }
 }
 
+/* ----------------------------------------------------
+ * Main card class
+ * ----------------------------------------------------
+ */
+
 .main-card {
   position: relative;
+  display: flex;
+  flex-direction: column;
   background-color: $--color-secondary;
   height: 700px;
   width: 100%;
-  box-shadow: 0 70px 100px -50px rgba(143, 125, 108, .8);
+  box-shadow: 0 70px 100px -50px rgba($--color-primary, .8);
   border-radius: 1rem;
   overflow: hidden;
-  
+
+  &::before {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    content: 'Please wait...';
+    background-color: inherit;
+    font-size: 2rem;
+    font-weight: bold;
+    height: 100%;
+    width: 100%;
+    z-index: 6;
+    animation: fade-out-loader 1s 1.8s forwards;
+  }
+
   @include breakpoint($--breakpoint-container) {
     height: 100%;
     width: 100%;
@@ -57,16 +91,28 @@ html {
   }
 }
 
+@keyframes fade-out-loader {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+/* ----------------------------------------------------
+ * Navbar class
+ * ----------------------------------------------------
+ */
+
 .navbar {
-  position: absolute;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 1rem 2.55rem;
   width: 100%;
-  top: 0;
-  left: 0;
-  z-index: 2;
 }
 
 .navbar-brand {
@@ -78,8 +124,7 @@ html {
   text-decoration: none;
 }
 
-.nav-toggler,
-.nav-overlay {
+.nav-toggler, .nav-overlay {
   display: none;
 }
 
@@ -95,12 +140,12 @@ html {
   background-color: $--color-primary;
   height: 3px;
   width: 20px;
-  bottom: 0.85rem;
+  bottom: 0.55rem;
   transform: translateX(45px);
   transition: transform 2s cubic-bezier(.8, 0, .36, 1);
 
   &.about {
-    transform: translateX(170px);
+    transform: translateX(162px);
   }
 
   &.anonymous {
@@ -121,17 +166,7 @@ html {
   font-weight: bold;
   text-decoration: none;
   text-transform: uppercase;
-  letter-spacing: 3px;
-}
-
-@include breakpoint($--breakpoint-tablet) {
-  .navbar {
-    padding: 1rem;
-  }
-
-  .navbar-brand {
-    margin: 0 1rem;
-  }
+  letter-spacing: 2px;
 }
 
 @include breakpoint($--breakpoint-large) {
@@ -141,14 +176,31 @@ html {
     justify-content: center;
     background-color: $--color-secondary;
     top: 0;
-    right: -320px;
+    right: -420px;
     height: 100%;
-    width: 320px;
-    z-index: 2;
+    width: 420px;
+    z-index: 5;
     transition: transform 0.25s;
 
     &.active {
-      transform: translateX(-320px);
+      transform: translateX(-420px);
+    }
+  }
+
+  .nav-indicator {
+    height: 8px;
+    width: 8px;
+    border-radius: 50px;
+    left: 0;
+    top: 50%;
+    transform: translate(120px, -75px);
+
+    &.about {
+      transform: translate(120px, -5px);
+    }
+
+    &.anonymous {
+      transform: translate(120px, 67px);
     }
   }
 
@@ -161,12 +213,30 @@ html {
     left: 0;
     bottom: 0;
     opacity: 0;
+    z-index: 4;
     pointer-events: none;
     transition: opacity 0.25s;
 
     &.active {
       opacity: 1;
       pointer-events: all;
+
+      & ~ .nav-toggler {
+        & span {
+          &:nth-child(1) {
+            transform: rotate(45deg);
+          }
+
+          &:nth-child(2) {
+            opacity: 0;
+          }
+
+          &:nth-child(3) {
+            width: 100%;
+            transform: rotate(-45deg);
+          }
+        }
+      }
     }
   }
 
@@ -175,8 +245,8 @@ html {
     display: flex;
     flex-direction: column;
     margin: 1rem;
-    width: 25px;
-    z-index: 3;
+    width: 22px;
+    z-index: 5;
     cursor: pointer;
   
     & span {
@@ -185,6 +255,8 @@ html {
       height: 1.5px;
       width: 100%;
       margin: 0.2rem;
+      transition: transform 0.3s, opacity 0.2s;
+      transform-origin: 8% 8%;
 
       &:last-child {
         width: 60%;
@@ -192,37 +264,87 @@ html {
     }
   }
 
-  .nav-indicator {
-    display: none;
-  }
-
   .nav-link {
     font-size: 1.8rem;
   }
 }
 
+@include breakpoint($--breakpoint-tablet) {
+  .navbar {
+    padding: 1rem;
+  }
+
+  .navbar-brand {
+    margin: 0;
+  }
+}
+
+@include breakpoint($--breakpoint-mobile) {
+  .nav {
+    right: -220px;
+    width: 220px;
+
+    &.active {
+      transform: translateX(-220px);
+    }
+  }
+
+  .nav-indicator {
+    height: 6px;
+    width: 6px;
+    transform: translate(40px, -62px);
+
+    &.about {
+      transform: translate(40px, -4px);
+    }
+
+    &.anonymous {
+      transform: translate(40px, 55px);
+    }
+  }
+}
+
+/* ----------------------------------------------------
+ * Page class - Holds each pages for transition effect
+ * ----------------------------------------------------
+ */
+
+.page-wrapper {
+  position: relative;
+  padding: 1rem 2.55rem;
+  height: 100%;
+}
+
 .page {
   position: absolute;
   display: flex;
+  flex-direction: column;
+  justify-content: center;
   padding: 0 2.55rem;
-  top: 0;
+  height: 100%;
+  width: 100%;
   bottom: 0;
-  left: 0;
   right: 0;
-  z-index: 1;
   pointer-events: none;
   opacity: 0;
   transition: opacity .5s .8s;
 
+  @include breakpoint($--breakpoint-tablet) {
+    flex-direction: row;
+    padding: 0;
+  }
+}
+
+/* ----------------------------------------------------
+ * Page transition animations
+ * ----------------------------------------------------
+ */
+
+.page-transit {
+  z-index: 0;
   &.active {
     pointer-events: all;
     opacity: 1;
-
-    &#anonymous {
-      li {
-        opacity: 1;
-      }
-    }
 
     &#home::before {
       transform: scaleY(1);
@@ -234,14 +356,20 @@ html {
       transition-delay: 1.8s;
     }
 
-    .card-body,
-    .card-title {
-      animation: come-in 1s 1s forwards cubic-bezier(.8, 0, .36, 1);
+    &#anonymous {
+      li {
+        opacity: 1;
+      }
+    }
+
+    &:not(.no-pre-transit) {
+      .card-body, .card-title {
+        animation: come-in 1s 1s forwards cubic-bezier(.8, 0, .36, 1);
+      }
     }
 
     .card-header {
-      &::before,
-      &::after {
+      &::before, &::after {
         transform: scaleX(1);
         transition-delay: 2.5s;
       }
@@ -253,14 +381,12 @@ html {
   }
 
   &.inactive {
-    .card-body,
-    .card-title {
+    .card-body, .card-title {
       animation: go-out 1s forwards cubic-bezier(.8, 0, .36, 1);
     }
 
     .card-header {
-      &::before,
-      &::after {
+      &::before, &::after {
         transform: scaleX(0);
       }
     }
@@ -279,42 +405,62 @@ html {
     content: '';
     background-color: $--color-primary;
     z-index: -1;
-    transform: scale(0);
+    opacity: .1;
+    transform: scale(1);
     transition: transform .5s cubic-bezier(.8, 0, .36, 1);
   }
+
+  @include breakpoint($--breakpoint-tablet) {
+    &.inactive {
+      &#home::before {
+        transform: scaleX(0);
+      }
+    }
+  }
 }
+
+/* ----------------------------------------------------
+ * Page transition animation keyframes
+ * ----------------------------------------------------
+ */
 
 @keyframes come-in {
   from {
     opacity: 0;
-    transform: translateY(50px);
+    transform: translateX(-20px);
   }
 
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateX(0);
   }
 }
 
 @keyframes go-out {
   from {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateX(0);
   }
 
   to {
     opacity: 0;
-    transform: translateY(-100px);
+    transform: translateX(20px);
   }
 }
 
+/* ----------------------------------------------------
+ * Card class
+ * ----------------------------------------------------
+ */
+
 .card {
-  margin: 0.55rem;
+  position: relative;
+  width: 48%;
 }
 
 .card-body {
   padding: 1rem;
-  font-size: 1.15rem;
+  font-size: 1.35rem;
   opacity: 0;
 }
 
@@ -322,8 +468,7 @@ html {
   position: relative;
   padding: 1rem;
   
-  &::before,
-  &::after {
+  &::before, &::after {
     position: absolute;
     content: '';
     background-color: $--color-primary;
@@ -340,96 +485,87 @@ html {
 
   &::after {
     width: 150px;
-    opacity: .3;
+    opacity: .15;
   }
 }
 
 .card-title {
-  font-size: 4.55rem;
-  line-height: 1;
+  font-size: 4rem;
   opacity: 0;
 }
 
-@include breakpoint($--breakpoint-tablet) {
-  .page {
-    padding: 1rem;
-
-    &.inactive {
-      &#home::before {
-        transform: scaleX(0);
-      }
-    }
+@include breakpoint($--breakpoint-large) {
+  .card-title {
+    font-size: 3.55rem;
   }
+}
 
+@include breakpoint($--breakpoint-tablet) {
   .card {
-    margin: 0 auto;
+    margin: 2rem auto;
+    width: 70%;
     text-align: center;
   }
 
   .card-header {
-    &::before,
-    &::after {
+    &::before, &::after {
       display: none;
     }
   }
 }
 
-@include breakpoint($--breakpoint-large) {
+@include breakpoint($--breakpoint-tablet) {
+  .card {
+    margin: 2rem;
+    width: 100%;
+  }
+
+  .card-body {
+    font-size: 1rem;
+  }
+
   .card-title {
-    font-size: 3.85rem;
+    font-size: 2.5rem;
   }
 }
 
+/* ----------------------------------------------------
+ * Applying styles based on IDs
+ * ----------------------------------------------------
+ */
+
 #home {
-  flex-direction: column;
-  justify-content: flex-end;
-  background: url('../images/Doge.png') no-repeat;
-  background-position: 95% 100%;
+  background: url('../images/Doge.png') no-repeat 100% 100%;
   background-size: 520px 580px;
 
   &::before {
-    top: 0;
-    left: 2.15rem;
-    height: 100%;
-    width: 280px;
-    opacity: .1;
+    bottom: 0;
+    left: 5.15rem;
+    height: 500px;
+    width: 180px;
     transform: scaleY(0);
-    transform-origin: top;
-  }
-
-  .card {
-    margin-bottom: 3rem;
-    width: 350px;
+    transform-origin: bottom;
   }
 }
 
 #about {
-  flex-direction: column;
   align-items: flex-end;
-  justify-content: center;
-  background: url('../images/Doge-about.png') no-repeat;
-  background-position: 10% 80%;
-  background-size: 550px 580px;
+  background: url('../images/Doge-about.png') no-repeat 5% 10%;
+  background-size: 450px 480px;
 
   &::before {
     bottom: 0;
     right: 0;
     height: 570px;
-    width: 400px;
+    width: 40%;
     opacity: .1;
     transform: scaleX(0);
     transform-origin: right;
   }
-
-  .card {
-    margin-top: 3rem;
-    width: 430px;
-  }
 }
 
 #anonymous {
-  flex-direction: column;
-  align-items: flex-end;
+  align-items: center;
   justify-content: center;
   background: url('../images/anonymous.jpg') no-repeat;
   background-size: cover;
@@ -441,35 +577,44 @@ html {
     list-style-type: none;
 
     li {
-      font-size: 2rem;
+      font-size: 1rem;
       font-weight: bold;
       opacity: 0;
       transition: opacity 0.1s ease;
       
       &:nth-child(1) {
-        font-size: 6rem;
-        transform: translate(-280%, -100%) rotate(-30deg);
+        font-size: 5rem;
+        transform: translate(30%, -50%) rotate(-30deg);
         transition-delay: 2s;
       }
 
       &:nth-child(2) {
-        font-size: 3rem;
-        transform: translate(-100%, -250%);
+        font-size: 2rem;
+        transform: translate(-50%, -250%);
         transition-delay: 4s;
       }
 
       &:nth-child(3) {
-        font-size: 2rem;
-        transform: translate(-300%, -50%);
+        transform: translate(50%, -50%);
         transition-delay: 3.5s;
       }
 
       &:nth-child(4) {
-        font-size: 5rem;
-        transform: translate(-180%, -180%) rotate(-20deg);
+        font-size: 3rem;
+        transform: translate(-10%, 40%) rotate(-20deg);
         transition-delay: 3s;
       }
     }
+  }
+}
+
+@include breakpoint($--breakpoint-container) {
+  #about {
+    background-position: center left;
+  }
+
+  #anonymous {
+    background-position: 30% 50%;
   }
 }
 
@@ -478,47 +623,105 @@ html {
   #home {
     justify-content: flex-start;
     background-position: center bottom;
-    background-size: 420px 480px;
 
     &::before {
-      height: 100px;
-      top: 7rem;
+      height: 150px;
+      width: 60%;
+      top: 11rem;
       left: 0;
-      transform: scaleX(1);
       transform-origin: left;
-    }
-
-    .card {
-      margin: 3rem auto 0;
-      width: 500px;
     }
   }
 
   #about {
-    justify-content: flex-end;
     background-position: center 10%;
-    background-size: 320px 360px;
+    background-size: 420px 460px;
   
     &::before {
-      height: 170px;
+      height: 250px;
+      width: 60%;
     }
   }
 }
 
 @include breakpoint($--breakpoint-mobile) {
   #home {
-    background-size: 320px 380px;
+    background-size: 300px 350px;
 
-    .card {
-      margin-top: 5rem;
-      width: 100% !important;
+    &::before {
+      top: 0;
     }
   }
 
   #about {
-    .card {
-      margin: 0;
-      width: 100%;
+    background-size: 230px 260px;
+
+    &::before {
+      height: 160px;
     }
+  }
+}
+
+/* ----------------------------------------------------
+ * Top sticky banner
+ * ----------------------------------------------------
+ */
+
+.message-bubble {
+  position: fixed;
+  background-color: $--color-primary;
+  color: $--color-secondary;
+  padding: 2rem;
+  margin: 2rem;
+  width: 400px;
+  left: 0;
+  bottom: 10%;
+  border-radius: 20px;
+  z-index: 7;
+  opacity: 0;
+  pointer-events: none;
+  box-shadow: 0 70px 100px -50px rgba($--color-primary, .8);
+
+  &.shown {
+    animation: pop-up 0.3s forwards;
+  }
+
+  a {
+    color: $--color-secondary;
+  }
+
+  @include breakpoint($--breakpoint-mobile) {
+    width: auto;
+    right: 0;
+    bottom: 1rem;
+  }
+}
+
+.message-bubble-btn {
+  background-color: $--color-secondary;
+  color: $--color-primary;
+  font-weight: bold;
+  padding: 0.5rem 2rem;
+  margin: 1rem 0;
+  border-radius: 50px;
+  border: none;
+  outline: none;
+  cursor: pointer;
+}
+
+@keyframes pop-up {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    pointer-events: all;
   }
 }
